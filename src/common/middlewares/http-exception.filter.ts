@@ -8,6 +8,7 @@ import {
 import { error } from 'console';
 import { Request, Response } from 'express';
 import { AppError } from '../errors/base.error';
+import { AppHttpErrorResponse } from '../helpers/http';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -35,15 +36,17 @@ export class HttpExceptionFilter implements ExceptionFilter {
       requestUrl,
     });
 
+    const errorResponse: AppHttpErrorResponse = {
+      statusCode,
+      timestamp,
+      path: requestUrl,
+      message,
+      errorCode,
+    };
+
     response.status(statusCode).json({
       data: null,
-      error: {
-        statusCode,
-        timestamp,
-        path: requestUrl,
-        message,
-        errorCode,
-      },
+      error: errorResponse,
     });
   }
 }
