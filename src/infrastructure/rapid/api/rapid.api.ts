@@ -1,5 +1,6 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import configuration from 'src/common/config/configuration';
+import { Injectable } from '@nestjs/common';
+import { InternalServerErrorHttp } from 'src/common/errors/internal-server.error';
 
 @Injectable()
 export class RapidApi {
@@ -26,7 +27,10 @@ export class RapidApi {
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new InternalServerErrorException(errorText);
+        throw new InternalServerErrorHttp({
+          errorCode: 'RAPID_API_ERROR',
+          cause: errorText,
+        });
       }
 
       return await response.json();
