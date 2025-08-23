@@ -2,11 +2,14 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/middlewares/http-exception.filter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import configuration from './common/config/configuration';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const env = configuration().app;
+  app.enableCors(env.cors);
   app.useGlobalFilters(new HttpExceptionFilter());
-  app.setGlobalPrefix(process.env.GLOBAL_PREFIX ?? 'api');
+  app.setGlobalPrefix(env.globalPrefix);
 
   const config = new DocumentBuilder()
     .setTitle('The Movie API ')
@@ -16,6 +19,6 @@ async function bootstrap() {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, documentFactory);
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(env.port);
 }
 bootstrap();
