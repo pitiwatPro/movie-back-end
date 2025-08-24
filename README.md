@@ -1,98 +1,173 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🎬 Movie Backend API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A movie API built with NestJS, TypeScript, and Clean Architecture principles. This backend service provides movie data through RESTful APIs with comprehensive documentation and authentication.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🚀 Live Demo
 
-## Description
+- **Frontend**: [https://movie-frontend-151383141329.asia-southeast1.run.app](https://movie-frontend-151383141329.asia-southeast1.run.app)
+- **Backend API**: [https://movie-backend-151383141329.asia-southeast1.run.app/swagger](https://movie-backend-151383141329.asia-southeast1.run.app/swagger)
+- **Frontend Repository**: [https://github.com/pitiwatPro/movie-front-end](https://github.com/pitiwatPro/movie-front-end)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 📋 Prerequisites
 
-## Project setup
+Before getting started, you need to obtain a **RAPID_API_KEY** from:
+[https://rapidapi.com/movie-of-the-night-movie-of-the-night-default/api/streaming-availability/playground](https://rapidapi.com/movie-of-the-night-movie-of-the-night-default/api/streaming-availability/playground)
 
-```bash
-$ npm install
+## 🛠️ Local Development Setup
+
+### Using Docker Compose (Recommended)
+
+1. **Create project directory and clone repositories:**
+   ```bash
+   mkdir movie_project
+   cd movie_project
+   git clone https://github.com/pitiwatPro/movie-back-end.git
+   ```
+
+2. **Configure environment variables:**
+   ```bash
+   cd movie-back-end
+   cp .env.example .env
+   echo "RAPID_API_KEY={your_rapid_api_key}" >> .env
+   # Replace {your_rapid_api_key} with your actual API key
+   ```
+
+3. **Start the application:**
+   ```bash
+   docker compose up -d
+   ```
+
+4. **Open your browser:**
+   Visit [http://localhost:3001/swagger](http://localhost:3001/swagger) for API documentation
+
+### Using npm (Development)
+
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+2. **Set up environment variables:**
+   ```bash
+   cp .env.example .env
+   # Edit .env file with your API keys
+   ```
+
+3. **Start development server:**
+   ```bash
+   npm run start:dev
+   ```
+
+## 🏗️ Project Architecture
+
+This project follows **Clean Architecture** principles with clear separation of concerns and dependency inversion:
+
+```
+src/
+├── app.module.ts          # Main application module
+├── main.ts               # Application entry point with Swagger setup
+├── common/               # Shared utilities and cross-cutting concerns
+│   ├── config/          # Configuration management
+│   ├── decorators/      # Custom decorators
+│   ├── errors/          # Custom error classes
+│   ├── guards/          # Authentication and authorization guards
+│   ├── helpers/         # Utility functions
+│   └── middlewares/     # Global middlewares and filters
+├── core/                # Business Logic Layer (Framework Independent)
+│   ├── adapters/        # Interfaces/Ports for external data sources
+│   ├── application/     # Use cases and business orchestration
+│   └── entities/        # Pure domain entities and business models
+└── infrastructure/      # External Data Layer and Framework Specific Code
+    ├── http/           # REST API controllers and DTOs
+    │   ├── health/     # Health check endpoints
+    │   └── movie/      # Movie-related API endpoints
+    └── rapid/          # External API integration (RapidAPI)
+        ├── api/        # RapidAPI client implementation
+        └── rapid.repository.ts # Movie repository implementation
 ```
 
-## Compile and run the project
+### Architecture Layers Explained:
+
+#### 🎯 **Core Layer** (Business Logic)
+- **`entities/`**: Pure domain models containing business rules and data structures
+- **`application/`**: Use cases that orchestrate business logic and coordinate between entities and adapters
+- **`adapters/`**: Interfaces (ports) that define contracts for external data sources, ensuring dependency inversion
+
+#### 🔌 **Infrastructure Layer** (External Data & Framework)
+- **`http/`**: REST API controllers that expose business functionality to clients
+- **`rapid/`**: External API integration implementing repository pattern for movie data
+- Implements adapter interfaces to work seamlessly with core business logic
+
+#### 🛠️ **Common Layer** (Cross-cutting Concerns)
+- **`config/`**: Environment configuration and application settings
+- **`guards/`**: API key authentication and authorization
+- **`errors/`**: Custom error handling and exception classes
+- **`middlewares/`**: Global error filters and request/response processing
+
+## 🛡️ Technologies Used
+
+- **Framework**: NestJS with Express
+- **Language**: TypeScript
+- **Documentation**: Swagger/OpenAPI
+- **Authentication**: API Key Guard
+- **Configuration**: @nestjs/config
+- **Validation**: Built-in NestJS validation
+- **Deployment**: Google Cloud Run
+- **Containerization**: Docker
+
+## 📁 Environment Variables
 
 ```bash
-# development
-$ npm run start
+# Server Configuration
+PORT=3001
+GLOBAL_PREFIX='api'
 
-# watch mode
-$ npm run start:dev
+# Security
+API_KEY='your_api_key_here'
 
-# production mode
-$ npm run start:prod
+# CORS Configuration
+CORS_ORIGIN='http://localhost:3000'
+CORS_METHODS='GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS'
+
+# External API
+RAPID_URL='https://streaming-availability.p.rapidapi.com'
+RAPID_API_KEY='YOUR_RAPID_API_KEY'
 ```
 
-## Run tests
+## 🚀 Available Scripts
 
+- **`npm run start`**: Start production server
+- **`npm run start:dev`**: Start development server with watch mode
+- **`npm run start:debug`**: Start development server with debug mode
+- **`npm run build`**: Build production application
+- **`npm run lint`**: Run ESLint for code quality
+- **`npm run test`**: Run unit tests
+- **`npm run test:e2e`**: Run end-to-end tests
+
+## 📚 API Documentation
+
+Once the application is running, visit:
+- **Local**: [http://localhost:3001/swagger](http://localhost:3001/swagger)
+- **Production**: [https://movie-backend-151383141329.asia-southeast1.run.app/swagger](https://movie-backend-151383141329.asia-southeast1.run.app/swagger)
+
+### Authentication
+
+All movie endpoints require an API key to be included in the request headers:
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+x-api-key: your_api_key_here
 ```
 
-## Deployment
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## 🌐 Deployment
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+The application is automatically deployed to Google Cloud Run via GitHub Actions when pushing to the main branch. The CI/CD pipeline includes:
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+- ✅ Type checking and linting
+- 🧪 Running tests
+- 🐳 Docker image building
+- 🚀 Automatic deployment to Cloud Run
+- 🔍 Health checks and rollback on failure
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## 🔗 Related Projects
 
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- [Movie Frontend Application](https://github.com/pitiwatPro/movie-front-end) - Next.js frontend application
