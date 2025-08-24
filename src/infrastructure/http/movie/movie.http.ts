@@ -1,10 +1,13 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { GetTopMovieUseCase } from 'src/core/application/get-top-movie.usecase';
 import { GetTopRatedMoviesResponse } from './dto/get-top-movie.dto';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags, ApiSecurity } from '@nestjs/swagger';
+import { ApiKeyGuard } from 'src/common/guards/api-key.guard';
 
-@ApiTags('cats')
+@ApiTags('Movies')
+@ApiSecurity('api-key')
 @Controller('movies')
+@UseGuards(ApiKeyGuard)
 export class MovieHttp {
   constructor(private readonly getTopMovieUseCase: GetTopMovieUseCase) {}
 

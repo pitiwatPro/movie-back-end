@@ -2,6 +2,7 @@ export default () => ({
   app: {
     port: parseInt(process.env.PORT || '3001'),
     globalPrefix: process.env.GLOBAL_PREFIX || 'api',
+    apiKey: process.env.API_KEY || '',
     cors: {
       origin: process.env.CORS?.split(',') || [],
       methods: process.env.CORS_METHODS || '',

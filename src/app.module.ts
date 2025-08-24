@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { MovieRepository } from './core/adapters/movie.repository';
 import { RadpidRepository } from './infrastructure/rapid/rapid.repository';
 import configuration from './common/config/configuration';
@@ -6,6 +7,7 @@ import { RapidModule } from './infrastructure/rapid/rapid.module';
 import { GetTopMovieUseCase } from './core/application/get-top-movie.usecase';
 import { ConfigModule } from '@nestjs/config';
 import { MovieHttp } from './infrastructure/http/movie/movie.http';
+import { ApiKeyGuard } from './common/guards/api-key.guard';
 
 @Module({
   imports: [
@@ -21,6 +23,10 @@ import { MovieHttp } from './infrastructure/http/movie/movie.http';
     {
       provide: MovieRepository,
       useClass: RadpidRepository,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ApiKeyGuard,
     },
   ],
 })
