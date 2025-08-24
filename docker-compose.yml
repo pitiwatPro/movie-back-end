@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - GLOBAL_PREFIX=api
+      - RAPID_URL=https://streaming-availability.p.rapidapi.com
+      - API_KEY=movie_api_key_here
+      - RAPID_API_KEY=${RAPID_API_KEY}
+    restart: unless-stopped
