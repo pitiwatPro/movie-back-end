@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { AppError } from '../errors/base.error';
-import { HttpStatus, InternalServerErrorException } from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common';
 import { InternalServerErrorHttp } from '../errors/internal-server.error';
 
 export interface AppHttpResponse<T> {

@@ -19,23 +19,19 @@ export class RapidApi {
   }
 
   async get(endpoint: string): Promise<any> {
-    try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
-        method: 'GET',
-        headers: this.headers,
+    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      method: 'GET',
+      headers: this.headers,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new InternalServerErrorHttp({
+        errorCode: 'RAPID_API_ERROR',
+        cause: errorText,
       });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new InternalServerErrorHttp({
-          errorCode: 'RAPID_API_ERROR',
-          cause: errorText,
-        });
-      }
-
-      return await response.json();
-    } catch (error) {
-      throw error;
     }
+
+    return await response.json();
   }
 }
