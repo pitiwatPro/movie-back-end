@@ -8,6 +8,7 @@ import { GetTopMovieUseCase } from './core/application/get-top-movie.usecase';
 import { ConfigModule } from '@nestjs/config';
 import { MovieHttp } from './infrastructure/http/movie/movie.http';
 import { ApiKeyGuard } from './common/guards/api-key.guard';
+import { HealthHttp } from './infrastructure/http/health/health.http';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { ApiKeyGuard } from './common/guards/api-key.guard';
     }),
     RapidModule,
   ],
-  controllers: [MovieHttp],
+  controllers: [HealthHttp, MovieHttp],
   providers: [
     GetTopMovieUseCase,
     {
