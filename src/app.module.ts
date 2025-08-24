@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { MovieHttp } from './infrastructure/http/movie/movie.http';
 import { ApiKeyGuard } from './common/guards/api-key.guard';
 import { HealthHttp } from './infrastructure/http/health/health.http';
+import { MovieDetailUseCase } from './core/application/get-movie-detail.usecase';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { HealthHttp } from './infrastructure/http/health/health.http';
   controllers: [HealthHttp, MovieHttp],
   providers: [
     GetTopMovieUseCase,
+    MovieDetailUseCase,
     {
       provide: MovieRepository,
       useClass: RadpidRepository,

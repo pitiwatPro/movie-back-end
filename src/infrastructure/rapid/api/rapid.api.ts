@@ -1,6 +1,7 @@
 import configuration from 'src/common/config/configuration';
 import { Injectable } from '@nestjs/common';
 import { InternalServerErrorHttp } from 'src/common/errors/internal-server.error';
+import { AppError } from 'src/common/errors/base.error';
 
 @Injectable()
 export class RapidApi {
@@ -25,7 +26,12 @@ export class RapidApi {
     });
 
     if (!response.ok) {
+      const status = response.status;
       const errorText = await response.text();
+      if (status < 500) {
+        throw new AppError(status, errorText, `RAPID_API_${status}`, null);
+      }
+
       throw new InternalServerErrorHttp({
         errorCode: 'RAPID_API_ERROR',
         cause: errorText,

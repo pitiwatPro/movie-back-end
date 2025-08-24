@@ -2,8 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { MovieRepository } from 'src/core/adapters/movie.repository';
 import { Movie } from 'src/core/entities/movie.entity';
 import { RapidApi } from './api/rapid.api';
-import { RapidApiResponse, RapidMovieItem } from './rapid.type';
-
+import {
+  RapidApiResponse,
+  RapidMovieDetailApiResponse,
+  RapidMovieItem,
+} from './rapid.type';
+import { MovieDetail } from 'src/core/entities/movie-detail.entity';
+import { NotFoundErrorHttp } from 'src/common/errors/not-found.error';
 @Injectable()
 export class RadpidRepository implements MovieRepository {
   constructor(private readonly rapidApi: RapidApi) {}
@@ -22,5 +27,33 @@ export class RadpidRepository implements MovieRepository {
       movie.thumbnailImage = item.imageSet?.horizontalPoster?.w480 || '';
       return movie;
     });
+  }
+
+  async getMovieDetailById(id: string): Promise<MovieDetail> {
+    const data = (await this.rapidApi.get(
+      `/shows/${id}?series_granularity=show&output_language=en`,
+    )) as RapidMovieDetailApiResponse;
+
+    if (!data.id) {
+      throw new NotFoundErrorHttp({
+        message: 'Movie not found',
+        errorCode: 'MOVIE_NOT_FOUND',
+      });
+    }
+
+    const movieDetail = new MovieDetail();
+    movieDetail.id = data.id;
+    movieDetail.title = data.title;
+    movieDetail.overview = data.overview || '';
+    movieDetail.firstAirYear = data.firstAirYear || null;
+    movieDetail.lastAirYear = data.lastAirYear || null;
+    movieDetail.fullImage = data.imageSet?.horizontalPoster?.w1080 || '';
+    movieDetail.genres = data.genres || [];
+    movieDetail.creators = data.creators || [];
+    movieDetail.cast = data.cast || [];
+    movieDetail.rating = data.rating || null;
+    movieDetail.seasonCount = data.seasonCount || null;
+    movieDetail.episodeCount = data.episodeCount || null;
+    return movieDetail;
   }
 }
